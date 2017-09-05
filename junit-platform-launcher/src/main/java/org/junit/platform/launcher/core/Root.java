@@ -52,12 +52,13 @@ class Root {
 
 	void applyPostDiscoveryFilters(LauncherDiscoveryRequest discoveryRequest) {
 		Filter<TestDescriptor> postDiscoveryFilter = composeFilters(discoveryRequest.getPostDiscoveryFilters());
-		TestDescriptor.Visitor removeExcludedTestDescriptors = descriptor -> {
-			if (!descriptor.isRoot() && isExcluded(descriptor, postDiscoveryFilter)) {
-				descriptor.removeFromHierarchy();
-			}
-		};
-		acceptInAllTestEngines(removeExcludedTestDescriptors);
+		for (TestDescriptor engineDescriptor : testEngineDescriptors.values()) {
+			engineDescriptor.applyInSubtreeTopDown(descriptor -> {
+				if (isExcluded(descriptor, postDiscoveryFilter)) {
+					descriptor.removeFromHierarchy();
+				}
+			});
+		}
 	}
 
 	/**
@@ -68,15 +69,13 @@ class Root {
 	 * pruning, it will <strong>not</strong> be removed.
 	 */
 	void prune() {
-		acceptInAllTestEngines(TestDescriptor::prune);
+		for (TestDescriptor engineDescriptor : testEngineDescriptors.values()) {
+			engineDescriptor.applyInSubtreeBottomUp(TestDescriptor::prune);
+		}
 	}
 
 	private boolean isExcluded(TestDescriptor descriptor, Filter<TestDescriptor> postDiscoveryFilter) {
 		return descriptor.getChildren().isEmpty() && postDiscoveryFilter.apply(descriptor).excluded();
-	}
-
-	private void acceptInAllTestEngines(TestDescriptor.Visitor visitor) {
-		this.testEngineDescriptors.values().forEach(descriptor -> descriptor.accept(visitor));
 	}
 
 }

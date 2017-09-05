@@ -80,8 +80,8 @@ public class DiscoverySelectorResolver {
 		new DiscoveryFilterApplier().applyClassNamePredicate(classFilter::match, engineDescriptor);
 	}
 
-	private void pruneTree(TestDescriptor rootDescriptor) {
-		rootDescriptor.accept(TestDescriptor::prune);
+	private void pruneTree(TestDescriptor engineDescriptor) {
+		engineDescriptor.applyInSubtreeBottomUp(TestDescriptor::prune);
 	}
 
 	private JavaElementsResolver createJavaElementsResolver(TestDescriptor engineDescriptor) {
@@ -93,5 +93,4 @@ public class DiscoverySelectorResolver {
 		resolvers.add(new TestTemplateMethodResolver());
 		return new JavaElementsResolver(engineDescriptor, resolvers);
 	}
-
 }

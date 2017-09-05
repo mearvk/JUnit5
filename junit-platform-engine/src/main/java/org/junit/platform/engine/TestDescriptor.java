@@ -16,8 +16,10 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.apiguardian.api.API;
+import org.junit.platform.commons.util.Preconditions;
 
 /**
  * Mutable descriptor for a test or container that has been discovered by a
@@ -215,9 +217,45 @@ public interface TestDescriptor {
 	 * @see #removeFromHierarchy()
 	 */
 	default void prune() {
-		if (!isRoot() && !containsTests(this)) {
+		if (!containsTests(this)) {
 			removeFromHierarchy();
 		}
+	}
+
+	/**
+	 * Applies the given {@code Consumer} to the subtree starting with this
+	 * descriptor in a top-down manner.
+	 *
+	 * @param consumer the {@code Consumer} to apply; never {@code null}
+	 */
+	default void applyInSubtreeTopDown(Consumer<TestDescriptor> consumer) {
+		Preconditions.notNull(consumer, "consumer must not be null");
+
+		consumer.accept(this);
+
+		// Create a copy of the set in order to avoid a ConcurrentModificationException
+		LinkedHashSet<? extends TestDescriptor> children = new LinkedHashSet<>(getChildren());
+		for (TestDescriptor child : children) {
+			child.applyInSubtreeTopDown(consumer);
+		}
+	}
+
+	/**
+	 * Applies the given {@code Consumer} to the subtree starting with this
+	 * descriptor in a bottom-up manner.
+	 *
+	 * @param consumer the {@code Consumer} to apply; never {@code null}
+	 */
+	default void applyInSubtreeBottomUp(Consumer<TestDescriptor> consumer) {
+		Preconditions.notNull(consumer, "consumer must not be null");
+
+		// Create a copy of the set in order to avoid a ConcurrentModificationException
+		LinkedHashSet<? extends TestDescriptor> children = new LinkedHashSet<>(getChildren());
+		for (TestDescriptor child : children) {
+			child.applyInSubtreeBottomUp(consumer);
+		}
+
+		consumer.accept(this);
 	}
 
 	/**
@@ -229,33 +267,6 @@ public interface TestDescriptor {
 	 * @param uniqueId the {@code UniqueId} to search for; never {@code null}
 	 */
 	Optional<? extends TestDescriptor> findByUniqueId(UniqueId uniqueId);
-
-	/**
-	 * Accept a visitor to the subtree starting with this descriptor.
-	 *
-	 * @param visitor the {@code Visitor} to accept; never {@code null}
-	 */
-	default void accept(Visitor visitor) {
-		visitor.visit(this);
-		// Create a copy of the set in order to avoid a ConcurrentModificationException
-		new LinkedHashSet<>(this.getChildren()).forEach(child -> child.accept(visitor));
-	}
-
-	/**
-	 * Visitor for the tree-like {@link TestDescriptor} structure.
-	 *
-	 * @see TestDescriptor#accept
-	 */
-	@FunctionalInterface
-	interface Visitor {
-
-		/**
-		 * Visit a {@link TestDescriptor}.
-		 *
-		 * @param descriptor the {@code TestDescriptor} to visit; never {@code null}
-		 */
-		void visit(TestDescriptor descriptor);
-	}
 
 	/**
 	 * Supported types for {@link TestDescriptor TestDescriptors}.

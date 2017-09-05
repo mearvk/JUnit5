@@ -28,7 +28,6 @@ import org.apiguardian.api.API;
 import org.junit.platform.commons.util.PreconditionViolationException;
 import org.junit.platform.commons.util.Preconditions;
 import org.junit.platform.engine.TestDescriptor;
-import org.junit.platform.engine.TestDescriptor.Visitor;
 
 /**
  * {@code TestPlan} describes the tree of tests and containers as discovered
@@ -77,8 +76,9 @@ public final class TestPlan {
 	public static TestPlan from(Collection<TestDescriptor> engineDescriptors) {
 		Preconditions.notNull(engineDescriptors, "Cannot create TestPlan from a null collection of TestDescriptors");
 		TestPlan testPlan = new TestPlan(engineDescriptors.stream().anyMatch(TestDescriptor::containsTests));
-		Visitor visitor = descriptor -> testPlan.add(TestIdentifier.from(descriptor));
-		engineDescriptors.forEach(engineDescriptor -> engineDescriptor.accept(visitor));
+		for (TestDescriptor engineDescriptor : engineDescriptors) {
+			engineDescriptor.applyInSubtreeTopDown(descriptor -> testPlan.add(TestIdentifier.from(descriptor)));
+		}
 		return testPlan;
 	}
 
