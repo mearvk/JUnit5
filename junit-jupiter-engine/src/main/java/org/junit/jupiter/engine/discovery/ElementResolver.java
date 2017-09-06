@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.support.descriptor.TestDescriptorMutable;
 
 /**
  * @since 5.0
@@ -23,18 +24,18 @@ import org.junit.platform.engine.UniqueId;
 interface ElementResolver {
 
 	/**
-	 * Return a set of {@link TestDescriptor TestDescriptors} that can be
+	 * Return a set of {@link TestDescriptorMutable TestDescriptors} that can be
 	 * resolved by this resolver.
 	 *
 	 * <p>Returned set must be empty if {@code element} cannot be resolved.
 	 */
-	Set<TestDescriptor> resolveElement(AnnotatedElement element, TestDescriptor parent);
+	Set<TestDescriptorMutable> resolveElement(AnnotatedElement element, TestDescriptor parent);
 
 	/**
-	 * Return an optional {@link TestDescriptor}.
+	 * Return an optional {@link TestDescriptorMutable}.
 	 *
 	 * <p>Return {@code Optional.empty()} if {@code segment} cannot be resolved.
 	 */
-	Optional<TestDescriptor> resolveUniqueId(UniqueId.Segment segment, TestDescriptor parent);
+	Optional<TestDescriptorMutable> resolveUniqueId(UniqueId.Segment segment, TestDescriptor parent);
 
 }

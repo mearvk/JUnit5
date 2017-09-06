@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import org.junit.platform.engine.support.descriptor.TestDescriptorMutable;
 import org.junit.platform.engine.test.TestDescriptorStub;
 
 /**
@@ -30,7 +31,7 @@ class TestDescriptorTests {
 
 	@Test
 	void isRootWithParent() {
-		TestDescriptor child = new TestDescriptorStub(UniqueId.root("child", "child"), "child");
+		TestDescriptorMutable child = new TestDescriptorStub(UniqueId.root("child", "child"), "child");
 		child.setParent(new TestDescriptorStub(UniqueId.root("root", "root"), "root"));
 
 		assertFalse(child.isRoot());

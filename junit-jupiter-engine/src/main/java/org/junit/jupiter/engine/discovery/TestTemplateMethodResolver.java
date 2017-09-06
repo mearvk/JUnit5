@@ -16,8 +16,8 @@ import java.util.function.Predicate;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.engine.descriptor.TestTemplateTestDescriptor;
 import org.junit.jupiter.engine.discovery.predicates.IsTestTemplateMethod;
-import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.support.descriptor.TestDescriptorMutable;
 
 /**
  * {@code TestTemplateMethodResolver} is an {@link ElementResolver} that is
@@ -41,7 +41,7 @@ class TestTemplateMethodResolver extends AbstractMethodResolver {
 	}
 
 	@Override
-	protected TestDescriptor createTestDescriptor(UniqueId uniqueId, Class<?> testClass, Method method) {
+	protected TestDescriptorMutable createTestDescriptor(UniqueId uniqueId, Class<?> testClass, Method method) {
 		return new TestTemplateTestDescriptor(uniqueId, testClass, method);
 	}
 

@@ -14,13 +14,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.support.descriptor.TestDescriptorMutable;
 
 /**
  * @since 5.0
  */
-public abstract class TestDescriptorBuilder<T extends TestDescriptor> {
+public abstract class TestDescriptorBuilder<T extends TestDescriptorMutable> {
 
 	final List<TestDescriptorBuilder<?>> children = new ArrayList<>();
 

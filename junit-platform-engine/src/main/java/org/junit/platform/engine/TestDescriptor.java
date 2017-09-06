@@ -16,13 +16,11 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import org.apiguardian.api.API;
-import org.junit.platform.commons.util.Preconditions;
 
 /**
- * Mutable descriptor for a test or container that has been discovered by a
+ * Immutable descriptor for a test or container that has been discovered by a
  * {@link TestEngine}.
  *
  * @see TestEngine
@@ -30,6 +28,15 @@ import org.junit.platform.commons.util.Preconditions;
  */
 @API(status = STABLE, since = "1.0")
 public interface TestDescriptor {
+
+	/**
+	 * Determine if the supplied descriptor or any of its descendants contains
+	 * any tests.
+	 */
+	static boolean containsTests(TestDescriptor testDescriptor) {
+		return testDescriptor.isTest() || testDescriptor.mayRegisterTests()
+				|| testDescriptor.getChildren().stream().anyMatch(TestDescriptor::containsTests);
+	}
 
 	/**
 	 * Get the unique identifier (UID) for this descriptor.
@@ -89,14 +96,7 @@ public interface TestDescriptor {
 	/**
 	 * Get the <em>parent</em> of this descriptor, if available.
 	 */
-	Optional<TestDescriptor> getParent();
-
-	/**
-	 * Set the <em>parent</em> of this descriptor.
-	 *
-	 * @param parent the new parent of this descriptor; may be {@code null}.
-	 */
-	void setParent(TestDescriptor parent);
+	Optional<? extends TestDescriptor> getParent();
 
 	/**
 	 * Get the immutable set of <em>children</em> of this descriptor.
@@ -123,32 +123,6 @@ public interface TestDescriptor {
 		}
 		return Collections.unmodifiableSet(descendants);
 	}
-
-	/**
-	 * Add a <em>child</em> to this descriptor.
-	 *
-	 * @param descriptor the child to add to this descriptor; never {@code null}
-	 */
-	void addChild(TestDescriptor descriptor);
-
-	/**
-	 * Remove a <em>child</em> from this descriptor.
-	 *
-	 * @param descriptor the child to remove from this descriptor; never
-	 * {@code null}
-	 */
-	void removeChild(TestDescriptor descriptor);
-
-	/**
-	 * Remove this non-root descriptor from its parent and remove all the
-	 * children from this descriptor.
-	 *
-	 * <p>If this method is invoked on a {@linkplain #isRoot root} descriptor,
-	 * this method must throw a {@link org.junit.platform.commons.JUnitException
-	 * JUnitException} explaining that a root cannot be removed from the
-	 * hierarchy.
-	 */
-	void removeFromHierarchy();
 
 	/**
 	 * Determine if this descriptor is a <em>root</em> descriptor.
@@ -194,68 +168,6 @@ public interface TestDescriptor {
 	 */
 	default boolean mayRegisterTests() {
 		return false;
-	}
-
-	/**
-	 * Determine if the supplied descriptor or any of its descendants contains
-	 * any tests.
-	 */
-	static boolean containsTests(TestDescriptor testDescriptor) {
-		return testDescriptor.isTest() || testDescriptor.mayRegisterTests()
-				|| testDescriptor.getChildren().stream().anyMatch(TestDescriptor::containsTests);
-	}
-
-	/**
-	 * Remove this descriptor from the hierarchy unless it is a root or contains
-	 * tests.
-	 *
-	 * <p>A concrete {@link TestEngine} may override this method in order to
-	 * implement a different algorithm or to skip pruning altogether.
-	 *
-	 * @see #isRoot()
-	 * @see #containsTests(TestDescriptor)
-	 * @see #removeFromHierarchy()
-	 */
-	default void prune() {
-		if (!containsTests(this)) {
-			removeFromHierarchy();
-		}
-	}
-
-	/**
-	 * Applies the given {@code Consumer} to the subtree starting with this
-	 * descriptor in a top-down manner.
-	 *
-	 * @param consumer the {@code Consumer} to apply; never {@code null}
-	 */
-	default void applyInSubtreeTopDown(Consumer<TestDescriptor> consumer) {
-		Preconditions.notNull(consumer, "consumer must not be null");
-
-		consumer.accept(this);
-
-		// Create a copy of the set in order to avoid a ConcurrentModificationException
-		LinkedHashSet<? extends TestDescriptor> children = new LinkedHashSet<>(getChildren());
-		for (TestDescriptor child : children) {
-			child.applyInSubtreeTopDown(consumer);
-		}
-	}
-
-	/**
-	 * Applies the given {@code Consumer} to the subtree starting with this
-	 * descriptor in a bottom-up manner.
-	 *
-	 * @param consumer the {@code Consumer} to apply; never {@code null}
-	 */
-	default void applyInSubtreeBottomUp(Consumer<TestDescriptor> consumer) {
-		Preconditions.notNull(consumer, "consumer must not be null");
-
-		// Create a copy of the set in order to avoid a ConcurrentModificationException
-		LinkedHashSet<? extends TestDescriptor> children = new LinkedHashSet<>(getChildren());
-		for (TestDescriptor child : children) {
-			child.applyInSubtreeBottomUp(consumer);
-		}
-
-		consumer.accept(this);
 	}
 
 	/**
@@ -305,5 +217,4 @@ public interface TestDescriptor {
 		}
 
 	}
-
 }

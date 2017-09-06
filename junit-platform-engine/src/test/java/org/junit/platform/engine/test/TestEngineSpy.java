@@ -45,7 +45,16 @@ public class TestEngineSpy implements TestEngine {
 	}
 
 	@Override
+	public void prune(TestDescriptor testDescriptor) {
+	}
+
+	@Override
+	public void removeFromHierarchy(TestDescriptor testDescriptor) {
+	}
+
+	@Override
 	public void execute(ExecutionRequest request) {
 		this.requestForExecution = request;
 	}
+
 }

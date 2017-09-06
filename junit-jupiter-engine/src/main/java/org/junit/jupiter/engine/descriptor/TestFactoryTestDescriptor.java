@@ -28,11 +28,12 @@ import org.junit.jupiter.engine.execution.JupiterEngineExecutionContext;
 import org.junit.platform.commons.JUnitException;
 import org.junit.platform.commons.util.CollectionUtils;
 import org.junit.platform.commons.util.PreconditionViolationException;
+import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
 
 /**
- * {@link org.junit.platform.engine.TestDescriptor TestDescriptor} for
+ * {@link TestDescriptor} for
  * {@link org.junit.jupiter.api.TestFactory @TestFactory} methods.
  *
  * @since 5.0

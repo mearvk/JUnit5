@@ -26,7 +26,7 @@ import org.junit.platform.engine.TestTag;
 import org.junit.platform.engine.UniqueId;
 
 /**
- * Abstract base implementation of {@link TestDescriptor} that may be used by
+ * Abstract base implementation of {@link TestDescriptorMutable} that may be used by
  * custom {@link org.junit.platform.engine.TestEngine TestEngines}.
  *
  * <p>Subclasses should provide a {@link TestSource} in their constructor, if
@@ -35,28 +35,28 @@ import org.junit.platform.engine.UniqueId;
  * @since 1.0
  */
 @API(status = STABLE, since = "1.0")
-public abstract class AbstractTestDescriptor implements TestDescriptor {
+public abstract class AbstractTestDescriptor implements TestDescriptorMutable {
 
 	private final UniqueId uniqueId;
 
 	private final String displayName;
 
-	private final TestSource source;
+	private TestDescriptorMutable parent;
 
-	private TestDescriptor parent;
+	private final TestSource source;
 
 	/**
 	 * The synchronized set of children associated with this {@code TestDescriptor}.
 	 *
-	 * <p>This set is used in methods such as {@link #addChild(TestDescriptor)},
-	 * {@link #removeChild(TestDescriptor)}, {@link #removeFromHierarchy()}, and
+	 * <p>This set is used in methods such as {@link #addChild(TestDescriptorMutable)},
+	 * {@link #removeChild(TestDescriptorMutable)}, {@link #removeFromHierarchy()}, and
 	 * {@link #findByUniqueId(UniqueId)}, and an immutable copy of this set is
 	 * returned by {@link #getChildren()}.
 	 *
 	 * <p>If a subclass overrides any of the methods related to children, this
 	 * set should be used instead of a set local to the subclass.
 	 */
-	protected final Set<TestDescriptor> children = Collections.synchronizedSet(new LinkedHashSet<>(16));
+	private final Set<TestDescriptorMutable> children = Collections.synchronizedSet(new LinkedHashSet<>(16));
 
 	/**
 	 * Create a new {@code AbstractTestDescriptor} with the supplied
@@ -101,39 +101,17 @@ public abstract class AbstractTestDescriptor implements TestDescriptor {
 	}
 
 	@Override
-	public Set<TestTag> getTags() {
-		return emptySet();
-	}
-
-	@Override
-	public Optional<TestSource> getSource() {
-		return Optional.ofNullable(this.source);
-	}
-
-	@Override
 	public final Optional<TestDescriptor> getParent() {
 		return Optional.ofNullable(this.parent);
 	}
 
 	@Override
-	public final void setParent(TestDescriptor parent) {
+	public final void setParent(TestDescriptorMutable parent) {
 		this.parent = parent;
 	}
 
 	@Override
-	public final Set<? extends TestDescriptor> getChildren() {
-		return Collections.unmodifiableSet(this.children);
-	}
-
-	@Override
-	public void addChild(TestDescriptor child) {
-		Preconditions.notNull(child, "child must not be null");
-		child.setParent(this);
-		this.children.add(child);
-	}
-
-	@Override
-	public void removeChild(TestDescriptor child) {
+	public void removeChild(TestDescriptorMutable child) {
 		Preconditions.notNull(child, "child must not be null");
 		this.children.remove(child);
 		child.setParent(null);
@@ -160,6 +138,28 @@ public abstract class AbstractTestDescriptor implements TestDescriptor {
 				.findAny()
 				.orElse(Optional.empty());
 		// @formatter:on
+	}
+
+	@Override
+	public void addChild(TestDescriptorMutable child) {
+		Preconditions.notNull(child, "child must not be null");
+		child.setParent(this);
+		this.children.add(child);
+	}
+
+	@Override
+	public final Set<? extends TestDescriptorMutable> getChildren() {
+		return Collections.unmodifiableSet(this.children);
+	}
+
+	@Override
+	public Set<TestTag> getTags() {
+		return emptySet();
+	}
+
+	@Override
+	public Optional<TestSource> getSource() {
+		return Optional.ofNullable(this.source);
 	}
 
 	@Override

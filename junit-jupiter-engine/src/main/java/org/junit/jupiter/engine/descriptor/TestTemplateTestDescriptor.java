@@ -28,6 +28,7 @@ import org.junit.jupiter.engine.extension.ExtensionRegistry;
 import org.junit.platform.commons.util.Preconditions;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.support.descriptor.TestDescriptorMutable;
 
 /**
  * {@link TestDescriptor} for {@link org.junit.jupiter.api.TestTemplate @TestTemplate}
@@ -118,7 +119,7 @@ public class TestTemplateTestDescriptor extends MethodBasedTestDescriptor implem
 				TestTemplateInvocationContextProvider.class.getSimpleName(), getTestMethod()));
 	}
 
-	private Optional<TestDescriptor> createInvocationTestDescriptor(TestTemplateInvocationContext invocationContext,
+	private TestDescriptorMutable createInvocationTestDescriptor(TestTemplateInvocationContext invocationContext,
 			int index) {
 		UniqueId uniqueId = getUniqueId().append(TestTemplateInvocationTestDescriptor.SEGMENT_TYPE, "#" + index);
 		if (getDynamicDescendantFilter().test(uniqueId)) {
@@ -128,7 +129,7 @@ public class TestTemplateTestDescriptor extends MethodBasedTestDescriptor implem
 		return Optional.empty();
 	}
 
-	private void execute(DynamicTestExecutor dynamicTestExecutor, TestDescriptor testDescriptor) {
+	private void execute(DynamicTestExecutor dynamicTestExecutor, TestDescriptorMutable testDescriptor) {
 		addChild(testDescriptor);
 		dynamicTestExecutor.execute(testDescriptor);
 	}

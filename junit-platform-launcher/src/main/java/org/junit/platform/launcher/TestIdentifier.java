@@ -115,7 +115,7 @@ public final class TestIdentifier implements Serializable {
 	 *
 	 * @return the display name for this identifier; never {@code null} or blank
 	 * @see #getSource()
-	 * @see org.junit.platform.engine.TestDescriptor#getDisplayName()
+	 * @see TestDescriptor#getDisplayName()
 	 */
 	public String getDisplayName() {
 		return this.displayName;
@@ -129,7 +129,7 @@ public final class TestIdentifier implements Serializable {
 	 * <p>The default implementation simply delegates to {@link #getDisplayName()}.
 	 *
 	 * @return the legacy reporting name; never {@code null} or blank
-	 * @see org.junit.platform.engine.TestDescriptor#getLegacyReportingName()
+	 * @see TestDescriptor#getLegacyReportingName()
 	 * @see org.junit.platform.launcher.listeners.LegacyReportingUtils
 	 */
 	public String getLegacyReportingName() {

@@ -22,6 +22,7 @@ import org.junit.platform.engine.EngineDiscoveryRequest;
 import org.junit.platform.engine.ExecutionRequest;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.support.descriptor.TestDescriptorMutable;
 import org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine;
 
 /**
@@ -60,6 +61,22 @@ public final class JupiterTestEngine extends HierarchicalTestEngine<JupiterEngin
 		JupiterEngineDescriptor engineDescriptor = new JupiterEngineDescriptor(uniqueId);
 		new DiscoverySelectorResolver().resolveSelectors(discoveryRequest, engineDescriptor);
 		return engineDescriptor;
+	}
+
+	@Override
+	public void prune(TestDescriptor testDescriptor) {
+		testDescriptor.applyInSubtreeBottomUp(descriptor -> {
+			if (descriptor instanceof TestDescriptorMutable) {
+				((TestDescriptorMutable) descriptor).prune();
+			}
+		});
+	}
+
+	@Override
+	public void removeFromHierarchy(TestDescriptor testDescriptor) {
+		if (testDescriptor instanceof TestDescriptorMutable) {
+			((TestDescriptorMutable) testDescriptor).removeFromHierarchy();
+		}
 	}
 
 	@Override

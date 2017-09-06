@@ -16,8 +16,8 @@ import java.util.function.Predicate;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor;
 import org.junit.jupiter.engine.discovery.predicates.IsTestMethod;
-import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.support.descriptor.TestDescriptorMutable;
 
 /**
  * {@code TestMethodResolver} is an {@link ElementResolver} that is able to
@@ -41,7 +41,7 @@ class TestMethodResolver extends AbstractMethodResolver {
 	}
 
 	@Override
-	protected TestDescriptor createTestDescriptor(UniqueId uniqueId, Class<?> testClass, Method method) {
+	protected TestDescriptorMutable createTestDescriptor(UniqueId uniqueId, Class<?> testClass, Method method) {
 		return new TestMethodTestDescriptor(uniqueId, testClass, method);
 	}
 

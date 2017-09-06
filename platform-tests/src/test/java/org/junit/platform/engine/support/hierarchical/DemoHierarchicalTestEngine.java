@@ -18,6 +18,7 @@ import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.MethodSource;
+import org.junit.platform.engine.support.descriptor.TestDescriptorMutable;
 
 /**
  * @since 1.0
@@ -86,6 +87,22 @@ public final class DemoHierarchicalTestEngine extends HierarchicalTestEngine<Dem
 	@Override
 	public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId uniqueId) {
 		return engineDescriptor;
+	}
+
+	@Override
+	public void prune(TestDescriptor testDescriptor) {
+		testDescriptor.applyInSubtreeBottomUp(descriptor -> {
+			if (descriptor instanceof TestDescriptorMutable) {
+				((TestDescriptorMutable) descriptor).prune();
+			}
+		});
+	}
+
+	@Override
+	public void removeFromHierarchy(TestDescriptor testDescriptor) {
+		if (testDescriptor instanceof TestDescriptorMutable) {
+			((TestDescriptorMutable) testDescriptor).removeFromHierarchy();
+		}
 	}
 
 	@Override

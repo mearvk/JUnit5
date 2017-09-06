@@ -23,13 +23,13 @@ import org.apiguardian.api.API;
 import org.junit.jupiter.engine.discovery.predicates.IsTestClassWithTests;
 import org.junit.platform.commons.util.ClassFilter;
 import org.junit.platform.engine.EngineDiscoveryRequest;
-import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.discovery.ClassSelector;
 import org.junit.platform.engine.discovery.ClasspathRootSelector;
 import org.junit.platform.engine.discovery.MethodSelector;
 import org.junit.platform.engine.discovery.ModuleSelector;
 import org.junit.platform.engine.discovery.PackageSelector;
 import org.junit.platform.engine.discovery.UniqueIdSelector;
+import org.junit.platform.engine.support.descriptor.TestDescriptorMutable;
 
 /**
  * {@code DiscoverySelectorResolver} resolves selectors with the help of a
@@ -45,14 +45,14 @@ public class DiscoverySelectorResolver {
 
 	private static final IsTestClassWithTests isTestClassWithTests = new IsTestClassWithTests();
 
-	public void resolveSelectors(EngineDiscoveryRequest request, TestDescriptor engineDescriptor) {
+	public void resolveSelectors(EngineDiscoveryRequest request, TestDescriptorMutable engineDescriptor) {
 		ClassFilter classFilter = buildClassFilter(request, isTestClassWithTests);
 		resolve(request, engineDescriptor, classFilter);
 		filter(engineDescriptor, classFilter);
 		pruneTree(engineDescriptor);
 	}
 
-	private void resolve(EngineDiscoveryRequest request, TestDescriptor engineDescriptor, ClassFilter classFilter) {
+	private void resolve(EngineDiscoveryRequest request, TestDescriptorMutable engineDescriptor, ClassFilter classFilter) {
 		JavaElementsResolver javaElementsResolver = createJavaElementsResolver(engineDescriptor);
 
 		request.getSelectorsByType(ClasspathRootSelector.class).forEach(selector -> {
@@ -76,15 +76,15 @@ public class DiscoverySelectorResolver {
 		});
 	}
 
-	private void filter(TestDescriptor engineDescriptor, ClassFilter classFilter) {
+	private void filter(TestDescriptorMutable engineDescriptor, ClassFilter classFilter) {
 		new DiscoveryFilterApplier().applyClassNamePredicate(classFilter::match, engineDescriptor);
 	}
 
-	private void pruneTree(TestDescriptor engineDescriptor) {
-		engineDescriptor.applyInSubtreeBottomUp(TestDescriptor::prune);
+	private void pruneTree(TestDescriptorMutable engineDescriptor) {
+		engineDescriptor.applyInSubtreeBottomUp(TestDescriptorMutable::prune);
 	}
 
-	private JavaElementsResolver createJavaElementsResolver(TestDescriptor engineDescriptor) {
+	private JavaElementsResolver createJavaElementsResolver(TestDescriptorMutable engineDescriptor) {
 		Set<ElementResolver> resolvers = new LinkedHashSet<>();
 		resolvers.add(new TestContainerResolver());
 		resolvers.add(new NestedTestsResolver());

@@ -20,6 +20,7 @@ import org.junit.platform.engine.EngineExecutionListener;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.support.descriptor.TestDescriptorMutable;
 import org.junit.runner.Description;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -95,7 +96,7 @@ class RunListenerAdapter extends RunListener {
 
 	private VintageTestDescriptor registerDynamicTestDescriptor(Description description) {
 		// workaround for dynamic children as used by Spock's Runner
-		TestDescriptor parent = findParent(description);
+		TestDescriptorMutable parent = findParent(description);
 		UniqueId uniqueId = parent.getUniqueId().append(SEGMENT_TYPE_DYNAMIC, uniqueIdExtractor.apply(description));
 		VintageTestDescriptor dynamicDescriptor = new VintageTestDescriptor(uniqueId, description);
 		parent.addChild(dynamicDescriptor);
@@ -104,7 +105,7 @@ class RunListenerAdapter extends RunListener {
 		return dynamicDescriptor;
 	}
 
-	private TestDescriptor findParent(Description description) {
+	private TestDescriptorMutable findParent(Description description) {
 		// @formatter:off
 		return Optional.ofNullable(description.getTestClass())
 				.map(Description::createSuiteDescription)

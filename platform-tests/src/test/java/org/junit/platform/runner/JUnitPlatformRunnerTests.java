@@ -63,6 +63,7 @@ import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.descriptor.ClassSource;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 import org.junit.platform.engine.support.descriptor.MethodSource;
+import org.junit.platform.engine.support.descriptor.TestDescriptorMutable;
 import org.junit.platform.engine.support.hierarchical.DemoHierarchicalContainerDescriptor;
 import org.junit.platform.engine.support.hierarchical.DemoHierarchicalTestDescriptor;
 import org.junit.platform.engine.support.hierarchical.DemoHierarchicalTestEngine;
@@ -442,9 +443,11 @@ class JUnitPlatformRunnerTests {
 		@Test
 		void convertsTestIdentifiersIntoDescriptions() throws Exception {
 
-			TestDescriptor container1 = new TestDescriptorStub(UniqueId.root("root", "container1"), "container1");
+			TestDescriptorMutable container1 = new TestDescriptorStub(UniqueId.root("root", "container1"),
+				"container1");
 			container1.addChild(new TestDescriptorStub(UniqueId.root("root", "test1"), "test1"));
-			TestDescriptor container2 = new TestDescriptorStub(UniqueId.root("root", "container2"), "container2");
+			TestDescriptorMutable container2 = new TestDescriptorStub(UniqueId.root("root", "container2"),
+				"container2");
 			container2.addChild(new TestDescriptorStub(UniqueId.root("root", "test2a"), "test2a"));
 			container2.addChild(new TestDescriptorStub(UniqueId.root("root", "test2b"), "test2b"));
 			TestPlan testPlan = TestPlan.from(asList(container1, container2));
@@ -479,14 +482,14 @@ class JUnitPlatformRunnerTests {
 		@Test
 		void appliesFilter() throws Exception {
 
-			TestDescriptor originalParent1 = new TestDescriptorStub(UniqueId.root("root", "parent1"), "parent1");
+			TestDescriptorMutable originalParent1 = new TestDescriptorStub(UniqueId.root("root", "parent1"), "parent1");
 			originalParent1.addChild(new TestDescriptorStub(UniqueId.root("root", "leaf1"), "leaf1"));
-			TestDescriptor originalParent2 = new TestDescriptorStub(UniqueId.root("root", "parent2"), "parent2");
+			TestDescriptorMutable originalParent2 = new TestDescriptorStub(UniqueId.root("root", "parent2"), "parent2");
 			originalParent2.addChild(new TestDescriptorStub(UniqueId.root("root", "leaf2a"), "leaf2a"));
 			originalParent2.addChild(new TestDescriptorStub(UniqueId.root("root", "leaf2b"), "leaf2b"));
 			TestPlan fullTestPlan = TestPlan.from(asList(originalParent1, originalParent2));
 
-			TestDescriptor filteredParent = new TestDescriptorStub(UniqueId.root("root", "parent2"), "parent2");
+			TestDescriptorMutable filteredParent = new TestDescriptorStub(UniqueId.root("root", "parent2"), "parent2");
 			filteredParent.addChild(new TestDescriptorStub(UniqueId.root("root", "leaf2b"), "leaf2b"));
 			TestPlan filteredTestPlan = TestPlan.from(singleton(filteredParent));
 
@@ -589,8 +592,8 @@ class JUnitPlatformRunnerTests {
 		@Test
 		void reportsIgnoredEventsForLeavesWhenContainerIsSkipped() throws Exception {
 			UniqueId uniqueEngineId = UniqueId.forEngine("engine");
-			TestDescriptor engineDescriptor = new EngineDescriptor(uniqueEngineId, "engine");
-			TestDescriptor container = new TestDescriptorStub(UniqueId.root("root", "container"), "container");
+			TestDescriptorMutable engineDescriptor = new EngineDescriptor(uniqueEngineId, "engine");
+			TestDescriptorMutable container = new TestDescriptorStub(UniqueId.root("root", "container"), "container");
 			container.addChild(new TestDescriptorStub(UniqueId.root("root", "leaf"), "leaf"));
 			engineDescriptor.addChild(container);
 
@@ -739,7 +742,7 @@ class JUnitPlatformRunnerTests {
 	}
 
 	private TestDescriptor testDescriptorWithTags(String... tag) {
-		TestDescriptor testDescriptor = mock(TestDescriptor.class);
+		TestDescriptor testDescriptor = mock(TestDescriptorMutable.class);
 		Set<TestTag> tags = Arrays.stream(tag).map(TestTag::create).collect(toSet());
 		when(testDescriptor.getTags()).thenReturn(tags);
 		return testDescriptor;
@@ -783,17 +786,17 @@ class JUnitPlatformRunnerTests {
 		}
 
 		@Override
-		public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId uniqueId) {
+		public TestDescriptorMutable discover(EngineDiscoveryRequest discoveryRequest, UniqueId uniqueId) {
 			return new EngineDescriptor(uniqueId, "Dynamic Engine");
 		}
 
 		@Override
 		public void execute(ExecutionRequest request) {
 			EngineExecutionListener engineExecutionListener = request.getEngineExecutionListener();
-			TestDescriptor root = request.getRootTestDescriptor();
+			TestDescriptorMutable root = (TestDescriptorMutable) request.getRootTestDescriptor();
 
-			TestDescriptor container = new DemoContainerTestDescriptor(root.getUniqueId().append("container", "1"),
-				"container #1");
+			TestDescriptorMutable container = new DemoContainerTestDescriptor(
+				root.getUniqueId().append("container", "1"), "container #1");
 			root.addChild(container);
 
 			engineExecutionListener.dynamicTestRegistered(container);
@@ -801,29 +804,29 @@ class JUnitPlatformRunnerTests {
 
 			UniqueId containerUid = container.getUniqueId();
 
-			TestDescriptor dynamicTest1 = new DemoTestTestDescriptor(containerUid.append("test", "1"),
+			TestDescriptorMutable dynamicTest1 = new DemoTestTestDescriptor(containerUid.append("test", "1"),
 				"dynamic test #1");
 			container.addChild(dynamicTest1);
 			engineExecutionListener.dynamicTestRegistered(dynamicTest1);
 			engineExecutionListener.executionStarted(dynamicTest1);
 			engineExecutionListener.executionFinished(dynamicTest1, TestExecutionResult.successful());
 
-			TestDescriptor dynamicTest2 = new DemoTestTestDescriptor(containerUid.append("test", "2"),
+			TestDescriptorMutable dynamicTest2 = new DemoTestTestDescriptor(containerUid.append("test", "2"),
 				"dynamic test #2");
 			container.addChild(dynamicTest2);
 			engineExecutionListener.dynamicTestRegistered(dynamicTest2);
 			engineExecutionListener.executionStarted(dynamicTest2);
 			engineExecutionListener.executionFinished(dynamicTest2, TestExecutionResult.successful());
 
-			TestDescriptor dynamicTest3 = new DemoContainerAndTestTestDescriptor(containerUid.append("test", "3"),
-				"dynamic test #3");
+			TestDescriptorMutable dynamicTest3 = new DemoContainerAndTestTestDescriptor(
+				containerUid.append("test", "3"), "dynamic test #3");
 			container.addChild(dynamicTest3);
 			engineExecutionListener.dynamicTestRegistered(dynamicTest3);
 			engineExecutionListener.executionStarted(dynamicTest3);
 			engineExecutionListener.executionFinished(dynamicTest3, TestExecutionResult.successful());
 
-			TestDescriptor dynamicTest3a = new DemoTestTestDescriptor(dynamicTest3.getUniqueId().append("test", "3a"),
-				"dynamic test #3a");
+			TestDescriptorMutable dynamicTest3a = new DemoTestTestDescriptor(
+				dynamicTest3.getUniqueId().append("test", "3a"), "dynamic test #3a");
 			dynamicTest3.addChild(dynamicTest3a);
 			engineExecutionListener.dynamicTestRegistered(dynamicTest3a);
 			engineExecutionListener.executionStarted(dynamicTest3a);
@@ -832,6 +835,13 @@ class JUnitPlatformRunnerTests {
 			engineExecutionListener.executionFinished(container, TestExecutionResult.successful());
 		}
 
+		@Override
+		public void prune(TestDescriptor testDescriptor) {
+		}
+
+		@Override
+		public void removeFromHierarchy(TestDescriptor testDescriptor) {
+		}
 	}
 
 	private static class DemoContainerTestDescriptor extends AbstractTestDescriptor {

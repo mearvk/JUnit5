@@ -20,6 +20,7 @@ import org.junit.jupiter.engine.discovery.predicates.IsPotentialTestContainer;
 import org.junit.platform.commons.util.ReflectionUtils;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.support.descriptor.TestDescriptorMutable;
 
 /**
  * @since 5.0
@@ -31,7 +32,7 @@ class TestContainerResolver implements ElementResolver {
 	static final String SEGMENT_TYPE = "class";
 
 	@Override
-	public Set<TestDescriptor> resolveElement(AnnotatedElement element, TestDescriptor parent) {
+	public Set<TestDescriptorMutable> resolveElement(AnnotatedElement element, TestDescriptor parent) {
 		if (!(element instanceof Class)) {
 			return Collections.emptySet();
 		}
@@ -46,7 +47,7 @@ class TestContainerResolver implements ElementResolver {
 	}
 
 	@Override
-	public Optional<TestDescriptor> resolveUniqueId(UniqueId.Segment segment, TestDescriptor parent) {
+	public Optional<TestDescriptorMutable> resolveUniqueId(UniqueId.Segment segment, TestDescriptor parent) {
 
 		if (!segment.getType().equals(getSegmentType())) {
 			return Optional.empty();
@@ -73,7 +74,7 @@ class TestContainerResolver implements ElementResolver {
 	}
 
 	protected Class<? extends TestDescriptor> requiredParentType() {
-		return TestDescriptor.class;
+		return TestDescriptorMutable.class;
 	}
 
 	protected String getClassName(TestDescriptor parent, String segmentValue) {
@@ -96,7 +97,7 @@ class TestContainerResolver implements ElementResolver {
 		return parent.getUniqueId().append(getSegmentType(), getSegmentValue(testClass));
 	}
 
-	protected TestDescriptor resolveClass(Class<?> testClass, UniqueId uniqueId) {
+	protected TestDescriptorMutable resolveClass(Class<?> testClass, UniqueId uniqueId) {
 		return new ClassTestDescriptor(uniqueId, testClass);
 	}
 

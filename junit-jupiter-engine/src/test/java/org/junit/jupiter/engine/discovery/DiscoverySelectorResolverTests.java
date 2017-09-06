@@ -14,6 +14,7 @@ import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -188,7 +189,7 @@ class DiscoverySelectorResolverTests {
 		MethodSelector selector = selectMethod(notATest.getDeclaringClass(), notATest);
 		EngineDiscoveryRequest request = request().selectors(selector).build();
 		resolver.resolveSelectors(request, engineDescriptor);
-		assertTrue(engineDescriptor.getDescendants().isEmpty());
+		assertFalse(TestDescriptor.containsTests(engineDescriptor));
 	}
 
 	@Test
@@ -239,7 +240,7 @@ class DiscoverySelectorResolverTests {
 		EngineDiscoveryRequest request = request().selectors(selector).build();
 
 		resolver.resolveSelectors(request, engineDescriptor);
-		assertTrue(engineDescriptor.getDescendants().isEmpty());
+		assertFalse(TestDescriptor.containsTests(engineDescriptor));
 		assertThat(listener.stream(JavaElementsResolver.class, Level.WARNING).map(LogRecord::getMessage)) //
 				.contains("Unique ID '" + uniqueId + "' could not be resolved.");
 	}
@@ -250,7 +251,7 @@ class DiscoverySelectorResolverTests {
 		EngineDiscoveryRequest request = request().selectors(selector).build();
 
 		resolver.resolveSelectors(request, engineDescriptor);
-		assertTrue(engineDescriptor.getDescendants().isEmpty());
+		assertFalse(TestDescriptor.containsTests(engineDescriptor));
 	}
 
 	@Test
@@ -329,7 +330,7 @@ class DiscoverySelectorResolverTests {
 		EngineDiscoveryRequest request = request().selectors(selectUniqueId(uniqueId)).build();
 
 		resolver.resolveSelectors(request, engineDescriptor);
-		assertTrue(engineDescriptor.getDescendants().isEmpty());
+		assertFalse(TestDescriptor.containsTests(engineDescriptor));
 		assertThat(listener.stream(JavaElementsResolver.class, Level.WARNING).map(LogRecord::getMessage)) //
 				.contains("Unique ID '" + uniqueId + "' could only be partially resolved. "
 						+ "All resolved segments will be executed; however, the following segments "

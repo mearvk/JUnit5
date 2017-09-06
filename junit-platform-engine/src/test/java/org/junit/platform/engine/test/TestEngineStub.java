@@ -42,6 +42,14 @@ public class TestEngineStub implements TestEngine {
 	}
 
 	@Override
+	public void prune(TestDescriptor testDescriptor) {
+	}
+
+	@Override
+	public void removeFromHierarchy(TestDescriptor testDescriptor) {
+	}
+
+	@Override
 	public void execute(ExecutionRequest request) {
 	}
 

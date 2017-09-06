@@ -15,6 +15,7 @@ import org.junit.jupiter.engine.descriptor.NestedClassTestDescriptor;
 import org.junit.jupiter.engine.discovery.predicates.IsNestedTestClass;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.support.descriptor.TestDescriptorMutable;
 
 /**
  * @since 5.0
@@ -51,7 +52,7 @@ class NestedTestsResolver extends TestContainerResolver {
 	}
 
 	@Override
-	protected TestDescriptor resolveClass(Class<?> testClass, UniqueId uniqueId) {
+	protected TestDescriptorMutable resolveClass(Class<?> testClass, UniqueId uniqueId) {
 		return new NestedClassTestDescriptor(uniqueId, testClass);
 	}
 

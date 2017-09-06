@@ -40,9 +40,9 @@ import org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor;
 import org.junit.platform.commons.util.PreconditionViolationException;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.EngineExecutionListener;
-import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.reporting.ReportEntry;
+import org.junit.platform.engine.support.descriptor.TestDescriptorMutable;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
@@ -265,7 +265,7 @@ class ExtensionContextTests {
 			OuterClass.NestedClass.class);
 	}
 
-	private ClassTestDescriptor outerClassDescriptor(TestDescriptor child) {
+	private ClassTestDescriptor outerClassDescriptor(TestDescriptorMutable child) {
 		ClassTestDescriptor classTestDescriptor = new ClassTestDescriptor(UniqueId.root("class", "OuterClass"),
 			OuterClass.class);
 		if (child != null) {

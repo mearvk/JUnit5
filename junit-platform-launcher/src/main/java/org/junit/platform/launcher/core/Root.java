@@ -14,6 +14,7 @@ import static org.junit.platform.engine.Filter.composeFilters;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 import org.junit.platform.engine.Filter;
@@ -43,7 +44,7 @@ class Root {
 	}
 
 	Collection<TestDescriptor> getEngineDescriptors() {
-		return this.testEngineDescriptors.values();
+		return new LinkedHashSet<>(this.testEngineDescriptors.values());
 	}
 
 	TestDescriptor getTestDescriptorFor(TestEngine testEngine) {
@@ -52,13 +53,17 @@ class Root {
 
 	void applyPostDiscoveryFilters(LauncherDiscoveryRequest discoveryRequest) {
 		Filter<TestDescriptor> postDiscoveryFilter = composeFilters(discoveryRequest.getPostDiscoveryFilters());
-		for (TestDescriptor engineDescriptor : testEngineDescriptors.values()) {
-			engineDescriptor.applyInSubtreeTopDown(descriptor -> {
+		testEngineDescriptors.forEach((engine, testDescriptor) -> {
+			testDescriptor.applyInSubtreeTopDown(descriptor -> {
 				if (isExcluded(descriptor, postDiscoveryFilter)) {
-					descriptor.removeFromHierarchy();
+					engine.removeFromHierarchy(descriptor);
 				}
 			});
-		}
+		});
+	}
+
+	private boolean isExcluded(TestDescriptor descriptor, Filter<TestDescriptor> postDiscoveryFilter) {
+		return descriptor.getChildren().isEmpty() && postDiscoveryFilter.apply(descriptor).excluded();
 	}
 
 	/**
@@ -69,13 +74,9 @@ class Root {
 	 * pruning, it will <strong>not</strong> be removed.
 	 */
 	void prune() {
-		for (TestDescriptor engineDescriptor : testEngineDescriptors.values()) {
-			engineDescriptor.applyInSubtreeBottomUp(TestDescriptor::prune);
-		}
-	}
-
-	private boolean isExcluded(TestDescriptor descriptor, Filter<TestDescriptor> postDiscoveryFilter) {
-		return descriptor.getChildren().isEmpty() && postDiscoveryFilter.apply(descriptor).excluded();
+		testEngineDescriptors.forEach((engine, testDescriptor) -> {
+			engine.prune(testDescriptor);
+		});
 	}
 
 }

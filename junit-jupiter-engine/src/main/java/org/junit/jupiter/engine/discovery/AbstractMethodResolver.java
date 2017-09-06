@@ -21,6 +21,7 @@ import org.junit.jupiter.engine.descriptor.ClassTestDescriptor;
 import org.junit.platform.commons.util.ClassUtils;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.support.descriptor.TestDescriptorMutable;
 
 /**
  * @since 5.0
@@ -38,7 +39,7 @@ abstract class AbstractMethodResolver implements ElementResolver {
 	}
 
 	@Override
-	public Set<TestDescriptor> resolveElement(AnnotatedElement element, TestDescriptor parent) {
+	public Set<TestDescriptorMutable> resolveElement(AnnotatedElement element, TestDescriptor parent) {
 		if (!(element instanceof Method)) {
 			return Collections.emptySet();
 		}
@@ -56,7 +57,7 @@ abstract class AbstractMethodResolver implements ElementResolver {
 	}
 
 	@Override
-	public Optional<TestDescriptor> resolveUniqueId(UniqueId.Segment segment, TestDescriptor parent) {
+	public Optional<TestDescriptorMutable> resolveUniqueId(UniqueId.Segment segment, TestDescriptor parent) {
 		if (!segment.getType().equals(this.segmentType)) {
 			return Optional.empty();
 		}
@@ -92,12 +93,12 @@ abstract class AbstractMethodResolver implements ElementResolver {
 		return methodFinder.findMethod(segment.getValue(), parent.getTestClass());
 	}
 
-	private TestDescriptor createTestDescriptor(TestDescriptor parent, Method method) {
+	private TestDescriptorMutable createTestDescriptor(TestDescriptor parent, Method method) {
 		UniqueId uniqueId = createUniqueId(method, parent);
 		Class<?> testClass = ((ClassTestDescriptor) parent).getTestClass();
 		return createTestDescriptor(uniqueId, testClass, method);
 	}
 
-	protected abstract TestDescriptor createTestDescriptor(UniqueId uniqueId, Class<?> testClass, Method method);
+	protected abstract TestDescriptorMutable createTestDescriptor(UniqueId uniqueId, Class<?> testClass, Method method);
 
 }

@@ -23,6 +23,7 @@ import org.junit.platform.engine.ExecutionRequest;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestEngine;
 import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.support.descriptor.TestDescriptorMutable;
 import org.junit.vintage.engine.descriptor.RunnerTestDescriptor;
 import org.junit.vintage.engine.discovery.VintageDiscoverer;
 import org.junit.vintage.engine.execution.RunnerExecutor;
@@ -59,6 +60,22 @@ public final class VintageTestEngine implements TestEngine {
 	@Override
 	public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId uniqueId) {
 		return new VintageDiscoverer().discover(discoveryRequest, uniqueId);
+	}
+
+	@Override
+	public void prune(TestDescriptor testDescriptor) {
+		testDescriptor.applyInSubtreeBottomUp(descriptor -> {
+			if (descriptor instanceof TestDescriptorMutable) {
+				((TestDescriptorMutable) descriptor).prune();
+			}
+		});
+	}
+
+	@Override
+	public void removeFromHierarchy(TestDescriptor testDescriptor) {
+		if (testDescriptor instanceof TestDescriptorMutable) {
+			((TestDescriptorMutable) testDescriptor).removeFromHierarchy();
+		}
 	}
 
 	@Override

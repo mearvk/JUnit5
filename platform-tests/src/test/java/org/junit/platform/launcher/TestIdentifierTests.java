@@ -22,6 +22,7 @@ import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestTag;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.ClassSource;
+import org.junit.platform.engine.support.descriptor.TestDescriptorMutable;
 import org.junit.platform.engine.test.TestDescriptorStub;
 
 /**
@@ -40,7 +41,7 @@ class TestIdentifierTests {
 
 	@Test
 	void inheritsTypeFromDescriptor() {
-		TestDescriptor descriptor = new TestDescriptorStub(UniqueId.root("aType", "uniqueId"), "displayName");
+		TestDescriptorMutable descriptor = new TestDescriptorStub(UniqueId.root("aType", "uniqueId"), "displayName");
 		TestIdentifier identifier = TestIdentifier.from(descriptor);
 		assertEquals(TestDescriptor.Type.TEST, identifier.getType());
 		assertTrue(identifier.isTest());

@@ -13,11 +13,12 @@ package org.junit.platform.engine.support.descriptor;
 import static org.apiguardian.api.API.Status.STABLE;
 
 import org.apiguardian.api.API;
+import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 
 /**
- * An {@code EngineDescriptor} is a {@link org.junit.platform.engine.TestDescriptor
- * TestDescriptor} for a specific {@link org.junit.platform.engine.TestEngine TestEngine}.
+ * An {@code EngineDescriptor} is a {@link TestDescriptor}
+ * for a specific {@link org.junit.platform.engine.TestEngine TestEngine}.
  *
  * @since 1.0
  */
@@ -33,17 +34,17 @@ public class EngineDescriptor extends AbstractTestDescriptor {
 	 * @param displayName the display name for the described {@code TestEngine};
 	 * never {@code null} or blank
 	 * @see org.junit.platform.engine.TestEngine#getId()
-	 * @see org.junit.platform.engine.TestDescriptor#getDisplayName()
+	 * @see TestDescriptor#getDisplayName()
 	 */
 	public EngineDescriptor(UniqueId uniqueId, String displayName) {
 		super(uniqueId, displayName);
 	}
 
 	/**
-	 * Returns {@link org.junit.platform.engine.TestDescriptor.Type#CONTAINER}.
+	 * Returns {@link TestDescriptor.Type#CONTAINER}.
 	 *
-	 * @see org.junit.platform.engine.TestDescriptor#isContainer()
-	 * @see org.junit.platform.engine.TestDescriptor#isTest()
+	 * @see TestDescriptor#isContainer()
+	 * @see TestDescriptor#isTest()
 	 */
 	@Override
 	public Type getType() {

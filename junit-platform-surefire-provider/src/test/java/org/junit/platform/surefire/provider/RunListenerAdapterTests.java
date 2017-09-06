@@ -51,6 +51,7 @@ import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.descriptor.ClassSource;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
+import org.junit.platform.engine.support.descriptor.TestDescriptorMutable;
 import org.junit.platform.launcher.TestIdentifier;
 import org.junit.platform.launcher.TestPlan;
 import org.mockito.ArgumentCaptor;
@@ -114,9 +115,9 @@ class RunListenerAdapterTests {
 	@Test
 	void notifiedEagerlyForTestSetWhenClassExecutionStarted() throws Exception {
 		EngineDescriptor engine = newEngineDescriptor();
-		TestDescriptor parent = newClassDescriptor();
+		TestDescriptorMutable parent = newClassDescriptor();
 		engine.addChild(parent);
-		TestDescriptor child = newMethodDescriptor();
+		TestDescriptorMutable child = newMethodDescriptor();
 		parent.addChild(child);
 		TestPlan plan = TestPlan.from(Collections.singletonList(engine));
 
@@ -147,12 +148,12 @@ class RunListenerAdapterTests {
 	@Test
 	void notifiedLazilyForTestSetWhenFirstTestWithoutClassDescriptorParentStarted() {
 		EngineDescriptor engine = newEngineDescriptor();
-		TestDescriptor parent = newTestDescriptor(engine.getUniqueId().append("container", "noClass"), "parent",
+		TestDescriptorMutable parent = newTestDescriptor(engine.getUniqueId().append("container", "noClass"), "parent",
 			Type.CONTAINER);
 		engine.addChild(parent);
-		TestDescriptor child1 = newTestDescriptor(parent.getUniqueId().append("test", "child1"), "child1", Type.TEST);
+		TestDescriptorMutable child1 = newTestDescriptor(parent.getUniqueId().append("test", "child1"), "child1", Type.TEST);
 		parent.addChild(child1);
-		TestDescriptor child2 = newTestDescriptor(parent.getUniqueId().append("test", "child2"), "child2", Type.TEST);
+		TestDescriptorMutable child2 = newTestDescriptor(parent.getUniqueId().append("test", "child2"), "child2", Type.TEST);
 		parent.addChild(child2);
 		TestPlan plan = TestPlan.from(Collections.singletonList(engine));
 
@@ -297,7 +298,7 @@ class RunListenerAdapterTests {
 	@Test
 	void notifiedForTestSetWhenClassExecutionSucceeded() throws Exception {
 		EngineDescriptor engineDescriptor = newEngineDescriptor();
-		TestDescriptor classDescriptor = newClassDescriptor();
+		TestDescriptorMutable classDescriptor = newClassDescriptor();
 		engineDescriptor.addChild(classDescriptor);
 		adapter.testPlanExecutionStarted(TestPlan.from(singleton(engineDescriptor)));
 		adapter.executionStarted(TestIdentifier.from(classDescriptor));
@@ -383,7 +384,7 @@ class RunListenerAdapterTests {
 		return TestIdentifier.from(newMethodDescriptor());
 	}
 
-	private static TestDescriptor newMethodDescriptor(Class<?>... parameterTypes) throws Exception {
+	private static TestDescriptorMutable newMethodDescriptor(Class<?>... parameterTypes) throws Exception {
 		return new TestMethodTestDescriptor(UniqueId.forEngine("method"), MyTestClass.class,
 			MyTestClass.class.getDeclaredMethod(MY_TEST_METHOD_NAME, parameterTypes));
 	}
@@ -392,14 +393,14 @@ class RunListenerAdapterTests {
 		return TestIdentifier.from(newClassDescriptor());
 	}
 
-	private static TestDescriptor newClassDescriptor() {
+	private static TestDescriptorMutable newClassDescriptor() {
 		return new ClassTestDescriptor(UniqueId.root("class", MyTestClass.class.getName()), MyTestClass.class);
 	}
 
 	private static TestIdentifier newSourcelessChildIdentifierWithParent(TestPlan testPlan, String parentDisplay,
 			TestSource parentTestSource) {
 		// A parent test identifier with a name.
-		TestDescriptor parent = mock(TestDescriptor.class);
+		TestDescriptor parent = mock(TestDescriptorMutable.class);
 		when(parent.getUniqueId()).thenReturn(newId());
 		when(parent.getDisplayName()).thenReturn(parentDisplay);
 		when(parent.getLegacyReportingName()).thenReturn(parentDisplay);
@@ -408,7 +409,7 @@ class RunListenerAdapterTests {
 		TestIdentifier parentId = TestIdentifier.from(parent);
 
 		// The (child) test case that is to be executed as part of a test plan.
-		TestDescriptor child = mock(TestDescriptor.class);
+		TestDescriptor child = mock(TestDescriptorMutable.class);
 		when(child.getUniqueId()).thenReturn(newId());
 		when(child.getType()).thenReturn(Type.TEST);
 		when(child.getLegacyReportingName()).thenReturn("child");
@@ -433,7 +434,7 @@ class RunListenerAdapterTests {
 		return new EngineDescriptor(UniqueId.forEngine("engine"), "engine");
 	}
 
-	private TestDescriptor newTestDescriptor(UniqueId uniqueId, String displayName, Type type) {
+	private TestDescriptorMutable newTestDescriptor(UniqueId uniqueId, String displayName, Type type) {
 		return new AbstractTestDescriptor(uniqueId, displayName) {
 			@Override
 			public Type getType() {
@@ -442,8 +443,8 @@ class RunListenerAdapterTests {
 		};
 	}
 
-	private static TestIdentifier identifiersAsParentOnTestPlan(TestPlan plan, TestDescriptor parent,
-			TestDescriptor child) {
+	private static TestIdentifier identifiersAsParentOnTestPlan(TestPlan plan, TestDescriptorMutable parent,
+			TestDescriptorMutable child) {
 		child.setParent(parent);
 
 		TestIdentifier parentIdentifier = TestIdentifier.from(parent);

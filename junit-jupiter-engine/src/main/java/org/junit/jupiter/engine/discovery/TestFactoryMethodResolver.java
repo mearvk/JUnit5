@@ -16,8 +16,8 @@ import java.util.function.Predicate;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.engine.descriptor.TestFactoryTestDescriptor;
 import org.junit.jupiter.engine.discovery.predicates.IsTestFactoryMethod;
-import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.support.descriptor.TestDescriptorMutable;
 
 /**
  * {@code TestFactoryMethodResolver} is an {@link ElementResolver} that is
@@ -41,7 +41,7 @@ class TestFactoryMethodResolver extends AbstractMethodResolver {
 	}
 
 	@Override
-	protected TestDescriptor createTestDescriptor(UniqueId uniqueId, Class<?> testClass, Method method) {
+	protected TestDescriptorMutable createTestDescriptor(UniqueId uniqueId, Class<?> testClass, Method method) {
 		return new TestFactoryTestDescriptor(uniqueId, testClass, method);
 	}
 
