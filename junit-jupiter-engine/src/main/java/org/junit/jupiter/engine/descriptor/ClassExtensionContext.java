@@ -10,12 +10,6 @@
 
 package org.junit.jupiter.engine.descriptor;
 
-import static org.apiguardian.api.API.Status.INTERNAL;
-
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Method;
-import java.util.Optional;
-
 import org.apiguardian.api.API;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -23,11 +17,17 @@ import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.EngineExecutionListener;
 import org.junit.platform.engine.support.hierarchical.ThrowableCollector;
 
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Method;
+import java.util.Optional;
+
+import static org.apiguardian.api.API.Status.INTERNAL;
+
 /**
  * @since 5.0
  */
 @API(status = INTERNAL, since = "5.0")
-public final class ClassExtensionContext extends AbstractExtensionContext<ClassTestDescriptor> {
+public final class ClassExtensionContext extends AbstractExtensionContext<ClassBasedTestDescriptor> {
 
 	private final Lifecycle lifecycle;
 
@@ -38,10 +38,10 @@ public final class ClassExtensionContext extends AbstractExtensionContext<ClassT
 	/**
 	 * Create a new {@code ClassExtensionContext} with {@link Lifecycle#PER_METHOD}.
 	 *
-	 * @see #ClassExtensionContext(ExtensionContext, EngineExecutionListener, ClassTestDescriptor, Lifecycle, ConfigurationParameters, ThrowableCollector)
+	 * @see #ClassExtensionContext(ExtensionContext, EngineExecutionListener, ClassBasedTestDescriptor, Lifecycle, ConfigurationParameters, ThrowableCollector)
 	 */
 	public ClassExtensionContext(ExtensionContext parent, EngineExecutionListener engineExecutionListener,
-			ClassTestDescriptor testDescriptor, ConfigurationParameters configurationParameters,
+								 ClassBasedTestDescriptor testDescriptor, ConfigurationParameters configurationParameters,
 			ThrowableCollector throwableCollector) {
 
 		this(parent, engineExecutionListener, testDescriptor, Lifecycle.PER_METHOD, configurationParameters,
@@ -49,7 +49,7 @@ public final class ClassExtensionContext extends AbstractExtensionContext<ClassT
 	}
 
 	public ClassExtensionContext(ExtensionContext parent, EngineExecutionListener engineExecutionListener,
-			ClassTestDescriptor testDescriptor, Lifecycle lifecycle, ConfigurationParameters configurationParameters,
+								 ClassBasedTestDescriptor testDescriptor, Lifecycle lifecycle, ConfigurationParameters configurationParameters,
 			ThrowableCollector throwableCollector) {
 
 		super(parent, engineExecutionListener, testDescriptor, configurationParameters);

@@ -10,17 +10,20 @@
 
 package org.junit.jupiter.engine.discovery;
 
-import java.lang.reflect.AnnotatedElement;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Set;
-
+import org.junit.jupiter.api.ContainerTemplate;
 import org.junit.jupiter.engine.descriptor.ClassTestDescriptor;
+import org.junit.jupiter.engine.descriptor.ContainerTemplateTestDescriptor;
 import org.junit.jupiter.engine.discovery.predicates.IsPotentialTestContainer;
+import org.junit.platform.commons.util.AnnotationUtils;
 import org.junit.platform.commons.util.ReflectionUtils;
 import org.junit.platform.engine.ConfigurationParameters;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
+
+import java.lang.reflect.AnnotatedElement;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * @since 5.0
@@ -104,6 +107,9 @@ class TestContainerResolver implements ElementResolver {
 	}
 
 	protected TestDescriptor resolveClass(Class<?> testClass, UniqueId uniqueId) {
+		if (AnnotationUtils.isAnnotated(testClass, ContainerTemplate.class)) {
+			return new ContainerTemplateTestDescriptor(uniqueId, testClass, this.configurationParameters);
+		}
 		return new ClassTestDescriptor(uniqueId, testClass, this.configurationParameters);
 	}
 
