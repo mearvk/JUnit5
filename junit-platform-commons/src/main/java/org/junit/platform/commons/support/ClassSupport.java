@@ -14,6 +14,8 @@ import static org.apiguardian.api.API.Status.MAINTAINED;
 
 import java.util.function.Function;
 
+import javax.annotation.Nullable;
+
 import org.apiguardian.api.API;
 import org.junit.platform.commons.util.ClassUtils;
 
@@ -49,7 +51,7 @@ public final class ClassSupport {
 	 * string if the supplied class array is {@code null} or empty
 	 * @see #nullSafeToString(Function, Class...)
 	 */
-	public static String nullSafeToString(Class<?>... classes) {
+	public static String nullSafeToString(@Nullable Class<?>... classes) {
 		return ClassUtils.nullSafeToString(classes);
 	}
 

@@ -16,6 +16,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Supplier;
 
+import javax.annotation.Nullable;
+
 import org.apiguardian.api.API;
 import org.junit.platform.commons.PreconditionViolationException;
 
@@ -50,7 +52,7 @@ public final class Preconditions {
 	 * @throws PreconditionViolationException if the supplied object is {@code null}
 	 * @see #notNull(Object, Supplier)
 	 */
-	public static <T> T notNull(T object, String message) throws PreconditionViolationException {
+	public static <T> T notNull(@Nullable T object, String message) throws PreconditionViolationException {
 		condition(object != null, message);
 		return object;
 	}
@@ -64,7 +66,8 @@ public final class Preconditions {
 	 * @throws PreconditionViolationException if the supplied object is {@code null}
 	 * @see #condition(boolean, Supplier)
 	 */
-	public static <T> T notNull(T object, Supplier<String> messageSupplier) throws PreconditionViolationException {
+	public static <T> T notNull(@Nullable T object, Supplier<String> messageSupplier)
+			throws PreconditionViolationException {
 		condition(object != null, messageSupplier);
 		return object;
 	}
@@ -160,7 +163,9 @@ public final class Preconditions {
 	 * any {@code null} elements
 	 * @see #notNull(Object, String)
 	 */
-	public static <T> T[] containsNoNullElements(T[] array, String message) throws PreconditionViolationException {
+	@Nullable
+	public static <T> T[] containsNoNullElements(@Nullable T[] array, String message)
+			throws PreconditionViolationException {
 		if (array != null) {
 			Arrays.stream(array).forEach(object -> notNull(object, message));
 		}
@@ -180,7 +185,8 @@ public final class Preconditions {
 	 * any {@code null} elements
 	 * @see #notNull(Object, String)
 	 */
-	public static <T> T[] containsNoNullElements(T[] array, Supplier<String> messageSupplier)
+	@Nullable
+	public static <T> T[] containsNoNullElements(@Nullable T[] array, Supplier<String> messageSupplier)
 			throws PreconditionViolationException {
 
 		if (array != null) {
@@ -202,7 +208,8 @@ public final class Preconditions {
 	 * any {@code null} elements
 	 * @see #notNull(Object, String)
 	 */
-	public static <T extends Collection<?>> T containsNoNullElements(T collection, String message)
+	@Nullable
+	public static <T extends Collection<?>> T containsNoNullElements(@Nullable T collection, String message)
 			throws PreconditionViolationException {
 
 		if (collection != null) {
@@ -224,8 +231,9 @@ public final class Preconditions {
 	 * any {@code null} elements
 	 * @see #notNull(Object, String)
 	 */
-	public static <T extends Collection<?>> T containsNoNullElements(T collection, Supplier<String> messageSupplier)
-			throws PreconditionViolationException {
+	@Nullable
+	public static <T extends Collection<?>> T containsNoNullElements(@Nullable T collection,
+			Supplier<String> messageSupplier) throws PreconditionViolationException {
 
 		if (collection != null) {
 			collection.forEach(object -> notNull(object, messageSupplier));
@@ -245,7 +253,7 @@ public final class Preconditions {
 	 * @throws PreconditionViolationException if the supplied string is blank
 	 * @see #notBlank(String, Supplier)
 	 */
-	public static String notBlank(String str, String message) throws PreconditionViolationException {
+	public static String notBlank(@Nullable String str, String message) throws PreconditionViolationException {
 		condition(StringUtils.isNotBlank(str), message);
 		return str;
 	}
@@ -263,7 +271,8 @@ public final class Preconditions {
 	 * @see StringUtils#isNotBlank(String)
 	 * @see #condition(boolean, Supplier)
 	 */
-	public static String notBlank(String str, Supplier<String> messageSupplier) throws PreconditionViolationException {
+	public static String notBlank(@Nullable String str, Supplier<String> messageSupplier)
+			throws PreconditionViolationException {
 		condition(StringUtils.isNotBlank(str), messageSupplier);
 		return str;
 	}

@@ -49,6 +49,8 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nullable;
+
 import org.apiguardian.api.API;
 import org.junit.platform.commons.JUnitException;
 import org.junit.platform.commons.function.Try;
@@ -93,7 +95,7 @@ public final class ReflectionUtils {
 		/**
 		 * Traverse the hierarchy using bottom-up semantics.
 		 */
-		BOTTOM_UP;
+		BOTTOM_UP
 	}
 
 	// Pattern: "[Ljava.lang.String;", "[[[[Ljava.lang.String;", etc.
@@ -335,7 +337,7 @@ public final class ReflectionUtils {
 	 * @param obj the object to test; potentially {@code null}
 	 * @return {@code true} if the object is an array
 	 */
-	public static boolean isArray(Object obj) {
+	public static boolean isArray(@Nullable Object obj) {
 		return (obj != null && obj.getClass().isArray());
 	}
 
@@ -347,7 +349,7 @@ public final class ReflectionUtils {
 	 * @since 1.3.2
 	 */
 	@API(status = INTERNAL, since = "1.3.2")
-	public static boolean isMultidimensionalArray(Object obj) {
+	public static boolean isMultidimensionalArray(@Nullable Object obj) {
 		return (obj != null && obj.getClass().isArray() && obj.getClass().getComponentType().isArray());
 	}
 
@@ -372,7 +374,7 @@ public final class ReflectionUtils {
 	 * @see Class#isInstance(Object)
 	 * @see Class#isAssignableFrom(Class)
 	 */
-	public static boolean isAssignableTo(Object obj, Class<?> targetType) {
+	public static boolean isAssignableTo(@Nullable Object obj, Class<?> targetType) {
 		Preconditions.notNull(targetType, "target type must not be null");
 
 		if (obj == null) {
@@ -603,7 +605,7 @@ public final class ReflectionUtils {
 	 */
 	@API(status = DEPRECATED, since = "1.4")
 	@Deprecated
-	public static Optional<Object> readFieldValue(Field field, Object instance) {
+	public static Optional<Object> readFieldValue(Field field, @Nullable Object instance) {
 		return tryToReadFieldValue(field, instance).toOptional();
 	}
 
@@ -613,7 +615,7 @@ public final class ReflectionUtils {
 	 * @since 1.4
 	 */
 	@API(status = INTERNAL, since = "1.4")
-	public static Try<Object> tryToReadFieldValue(Field field, Object instance) {
+	public static Try<Object> tryToReadFieldValue(Field field, @Nullable Object instance) {
 		Preconditions.notNull(field, "Field must not be null");
 		Preconditions.condition((instance != null || isStatic(field)),
 			() -> String.format("Cannot read non-static field [%s] on a null instance.", field));
@@ -632,7 +634,7 @@ public final class ReflectionUtils {
 	 * @return an immutable list of the values of the specified fields; never
 	 * {@code null} but may be empty or contain {@code null} entries
 	 */
-	public static List<Object> readFieldValues(List<Field> fields, Object instance) {
+	public static List<Object> readFieldValues(List<Field> fields, @Nullable Object instance) {
 		return readFieldValues(fields, instance, field -> true);
 	}
 
@@ -649,7 +651,8 @@ public final class ReflectionUtils {
 	 * @return an immutable list of the values of the specified fields; never
 	 * {@code null} but may be empty or contain {@code null} entries
 	 */
-	public static List<Object> readFieldValues(List<Field> fields, Object instance, Predicate<Field> predicate) {
+	public static List<Object> readFieldValues(List<Field> fields, @Nullable Object instance,
+			Predicate<Field> predicate) {
 		Preconditions.notNull(fields, "fields list must not be null");
 		Preconditions.notNull(predicate, "Predicate must not be null");
 
@@ -666,7 +669,7 @@ public final class ReflectionUtils {
 	/**
 	 * @see org.junit.platform.commons.support.ReflectionSupport#invokeMethod(Method, Object, Object...)
 	 */
-	public static Object invokeMethod(Method method, Object target, Object... args) {
+	public static Object invokeMethod(Method method, @Nullable Object target, Object... args) {
 		Preconditions.notNull(method, "Method must not be null");
 		Preconditions.condition((target != null || isStatic(method)),
 			() -> String.format("Cannot invoke non-static method [%s] on a null target.", method.toGenericString()));
@@ -1153,7 +1156,7 @@ public final class ReflectionUtils {
 	 */
 	@API(status = DEPRECATED, since = "1.4")
 	@Deprecated
-	static Optional<Method> getMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) {
+	static Optional<Method> getMethod(Class<?> clazz, String methodName, @Nullable Class<?>... parameterTypes) {
 		return tryToGetMethod(clazz, methodName, parameterTypes).toOptional();
 	}
 
@@ -1174,7 +1177,7 @@ public final class ReflectionUtils {
 	 * @since 1.4
 	 */
 	@API(status = INTERNAL, since = "1.4")
-	public static Try<Method> tryToGetMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) {
+	public static Try<Method> tryToGetMethod(Class<?> clazz, String methodName, @Nullable Class<?>... parameterTypes) {
 		Preconditions.notNull(clazz, "Class must not be null");
 		Preconditions.notBlank(methodName, "Method name must not be null or blank");
 
@@ -1184,13 +1187,14 @@ public final class ReflectionUtils {
 	/**
 	 * @see org.junit.platform.commons.support.ReflectionSupport#findMethod(Class, String, String)
 	 */
-	public static Optional<Method> findMethod(Class<?> clazz, String methodName, String parameterTypeNames) {
+	public static Optional<Method> findMethod(Class<?> clazz, String methodName, @Nullable String parameterTypeNames) {
 		Preconditions.notNull(clazz, "Class must not be null");
 		Preconditions.notBlank(methodName, "Method name must not be null or blank");
 		return findMethod(clazz, methodName, resolveParameterTypes(clazz, methodName, parameterTypeNames));
 	}
 
-	private static Class<?>[] resolveParameterTypes(Class<?> clazz, String methodName, String parameterTypeNames) {
+	private static Class<?>[] resolveParameterTypes(Class<?> clazz, String methodName,
+			@Nullable String parameterTypeNames) {
 		if (StringUtils.isBlank(parameterTypeNames)) {
 			return EMPTY_CLASS_ARRAY;
 		}
@@ -1215,7 +1219,7 @@ public final class ReflectionUtils {
 	/**
 	 * @see org.junit.platform.commons.support.ReflectionSupport#findMethod(Class, String, Class...)
 	 */
-	public static Optional<Method> findMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) {
+	public static Optional<Method> findMethod(Class<?> clazz, String methodName, @Nullable Class<?>... parameterTypes) {
 		Preconditions.notNull(clazz, "Class must not be null");
 		Preconditions.notBlank(methodName, "Method name must not be null or blank");
 		Preconditions.notNull(parameterTypes, "Parameter types array must not be null");

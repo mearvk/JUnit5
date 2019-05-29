@@ -16,6 +16,8 @@ import static org.apiguardian.api.API.Status.INTERNAL;
 
 import java.util.function.Function;
 
+import javax.annotation.Nullable;
+
 import org.apiguardian.api.API;
 
 /**
@@ -49,7 +51,7 @@ public final class ClassUtils {
 	 * @see #nullSafeToString(Class...)
 	 * @see StringUtils#nullSafeToString(Object)
 	 */
-	public static String nullSafeToString(Class<?> clazz) {
+	public static String nullSafeToString(@Nullable Class<?> clazz) {
 		return clazz == null ? "null" : clazz.getName();
 	}
 
@@ -64,7 +66,7 @@ public final class ClassUtils {
 	 * @see #nullSafeToString(Function, Class...)
 	 * @see StringUtils#nullSafeToString(Object)
 	 */
-	public static String nullSafeToString(Class<?>... classes) {
+	public static String nullSafeToString(@Nullable Class<?>... classes) {
 		return nullSafeToString(Class::getName, classes);
 	}
 
@@ -83,7 +85,8 @@ public final class ClassUtils {
 	 * @see #nullSafeToString(Class...)
 	 * @see StringUtils#nullSafeToString(Object)
 	 */
-	public static String nullSafeToString(Function<? super Class<?>, ? extends String> mapper, Class<?>... classes) {
+	public static String nullSafeToString(Function<? super Class<?>, ? extends String> mapper,
+			@Nullable Class<?>... classes) {
 		Preconditions.notNull(mapper, "Mapping function must not be null");
 
 		if (classes == null || classes.length == 0) {

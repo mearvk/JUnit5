@@ -60,7 +60,7 @@ public final class PackageUtils {
 	 *
 	 * <p>The default package is represented by an empty string ({@code ""}).
 	 *
-	 * @param packageName the package name to validate
+	 * @param packageName the package name to validate; never {@code null}
 	 * @throws org.junit.platform.commons.PreconditionViolationException if the
 	 * supplied package name is {@code null}, contains only whitespace, or
 	 * contains parts that are not valid in terms of Java syntax (e.g.,
@@ -86,7 +86,7 @@ public final class PackageUtils {
 	 * object and the supplied function does not return {@code null} when
 	 * applied.
 	 *
-	 * @param type the type to get the package attribute for
+	 * @param type the type to get the package attribute for; never {@code null}
 	 * @param function a function that computes the package attribute value
 	 * (e.g., {@code Package::getImplementationTitle}); never {@code null}
 	 * @return an {@code Optional} containing the attribute value; never
@@ -116,8 +116,8 @@ public final class PackageUtils {
 	 * if any exception is caught while loading the manifest file via the
 	 * JAR file of the specified type.
 	 *
-	 * @param type the type to get the attribute for
-	 * @param name the attribute name as a string
+	 * @param type the type to get the attribute for; never {@code null}
+	 * @param name the attribute name as a string; never {@code null} or blank
 	 * @return an {@code Optional} containing the attribute value; never
 	 * {@code null} but potentially empty
 	 * @throws org.junit.platform.commons.PreconditionViolationException if the

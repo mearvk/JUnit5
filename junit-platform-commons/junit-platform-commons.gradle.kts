@@ -23,6 +23,7 @@ val mainRelease9Compile by configurations.getting
 dependencies {
 	mainRelease9Compile(sourceSets.main.get().output)
 	api("org.apiguardian:apiguardian-api:${Versions.apiGuardian}")
+	compileOnly("com.google.code.findbugs:jsr305:3.0.2")
 }
 
 tasks {

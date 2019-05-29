@@ -32,6 +32,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 
+import javax.annotation.Nullable;
+
 import org.apiguardian.api.API;
 import org.junit.platform.commons.JUnitException;
 import org.junit.platform.commons.util.ReflectionUtils.HierarchyTraversalMode;
@@ -71,7 +73,7 @@ public final class AnnotationUtils {
 	 * @see #findAnnotation(Optional, Class)
 	 * @see org.junit.platform.commons.support.AnnotationSupport#isAnnotated(Optional, Class)
 	 */
-	public static boolean isAnnotated(Optional<? extends AnnotatedElement> element,
+	public static boolean isAnnotated(@Nullable Optional<? extends AnnotatedElement> element,
 			Class<? extends Annotation> annotationType) {
 
 		return findAnnotation(element, annotationType).isPresent();
@@ -89,15 +91,15 @@ public final class AnnotationUtils {
 	 * @see #findAnnotation(AnnotatedElement, Class)
 	 * @see org.junit.platform.commons.support.AnnotationSupport#isAnnotated(AnnotatedElement, Class)
 	 */
-	public static boolean isAnnotated(AnnotatedElement element, Class<? extends Annotation> annotationType) {
+	public static boolean isAnnotated(@Nullable AnnotatedElement element, Class<? extends Annotation> annotationType) {
 		return findAnnotation(element, annotationType).isPresent();
 	}
 
 	/**
 	 * @see org.junit.platform.commons.support.AnnotationSupport#findAnnotation(Optional, Class)
 	 */
-	public static <A extends Annotation> Optional<A> findAnnotation(Optional<? extends AnnotatedElement> element,
-			Class<A> annotationType) {
+	public static <A extends Annotation> Optional<A> findAnnotation(
+			@Nullable Optional<? extends AnnotatedElement> element, Class<A> annotationType) {
 
 		if (element == null || !element.isPresent()) {
 			return Optional.empty();
@@ -109,14 +111,15 @@ public final class AnnotationUtils {
 	/**
 	 * @see org.junit.platform.commons.support.AnnotationSupport#findAnnotation(AnnotatedElement, Class)
 	 */
-	public static <A extends Annotation> Optional<A> findAnnotation(AnnotatedElement element, Class<A> annotationType) {
+	public static <A extends Annotation> Optional<A> findAnnotation(@Nullable AnnotatedElement element,
+			Class<A> annotationType) {
 		Preconditions.notNull(annotationType, "annotationType must not be null");
 		boolean inherited = annotationType.isAnnotationPresent(Inherited.class);
 		return findAnnotation(element, annotationType, inherited, new HashSet<>());
 	}
 
-	private static <A extends Annotation> Optional<A> findAnnotation(AnnotatedElement element, Class<A> annotationType,
-			boolean inherited, Set<Annotation> visited) {
+	private static <A extends Annotation> Optional<A> findAnnotation(@Nullable AnnotatedElement element,
+			Class<A> annotationType, boolean inherited, Set<Annotation> visited) {
 
 		Preconditions.notNull(annotationType, "annotationType must not be null");
 
@@ -187,8 +190,8 @@ public final class AnnotationUtils {
 	 * @since 1.5
 	 * @see org.junit.platform.commons.support.AnnotationSupport#findRepeatableAnnotations(Optional, Class)
 	 */
-	public static <A extends Annotation> List<A> findRepeatableAnnotations(Optional<? extends AnnotatedElement> element,
-			Class<A> annotationType) {
+	public static <A extends Annotation> List<A> findRepeatableAnnotations(
+			@Nullable Optional<? extends AnnotatedElement> element, Class<A> annotationType) {
 
 		if (element == null || !element.isPresent()) {
 			return Collections.emptyList();
@@ -200,7 +203,7 @@ public final class AnnotationUtils {
 	/**
 	 * @see org.junit.platform.commons.support.AnnotationSupport#findRepeatableAnnotations(AnnotatedElement, Class)
 	 */
-	public static <A extends Annotation> List<A> findRepeatableAnnotations(AnnotatedElement element,
+	public static <A extends Annotation> List<A> findRepeatableAnnotations(@Nullable AnnotatedElement element,
 			Class<A> annotationType) {
 
 		Preconditions.notNull(annotationType, "annotationType must not be null");

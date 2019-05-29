@@ -16,6 +16,8 @@ import static org.apiguardian.api.API.Status.INTERNAL;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nullable;
+
 import org.apiguardian.api.API;
 
 /**
@@ -64,7 +66,7 @@ public final class StringUtils {
 	 * @return {@code true} if the string is blank
 	 * @see #isNotBlank(String)
 	 */
-	public static boolean isBlank(String str) {
+	public static boolean isBlank(@Nullable String str) {
 		return (str == null || str.trim().isEmpty());
 	}
 
@@ -76,7 +78,7 @@ public final class StringUtils {
 	 * @return {@code true} if the string is not blank
 	 * @see #isBlank(String)
 	 */
-	public static boolean isNotBlank(String str) {
+	public static boolean isNotBlank(@Nullable String str) {
 		return !isBlank(str);
 	}
 

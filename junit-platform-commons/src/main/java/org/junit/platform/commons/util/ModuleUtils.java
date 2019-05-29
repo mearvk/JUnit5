@@ -63,7 +63,7 @@ public class ModuleUtils {
 	/**
 	 * Return the name of the module that the class or interface is a member of.
 	 *
-	 * @param type class or interface to analyze
+	 * @param type class or interface to analyze; never {@code null}
 	 * @return the module name; never {@code null} but potentially empty
 	 */
 	public static Optional<String> getModuleName(Class<?> type) {

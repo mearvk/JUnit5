@@ -8,4 +8,7 @@
  * extensions with the same semantics as within the JUnit Platform itself.
  */
 
+@NonNullApi
 package org.junit.platform.commons.support;
+
+import org.junit.platform.commons.annotation.NonNullApi;

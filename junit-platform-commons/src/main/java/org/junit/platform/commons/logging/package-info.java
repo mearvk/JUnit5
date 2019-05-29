@@ -8,4 +8,7 @@
  * Use at your own risk!
  */
 
+@NonNullApi
 package org.junit.platform.commons.logging;
+
+import org.junit.platform.commons.annotation.NonNullApi;

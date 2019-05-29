@@ -19,6 +19,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import javax.annotation.Nullable;
+
 import org.apiguardian.api.API;
 import org.junit.platform.commons.JUnitException;
 
@@ -147,6 +149,7 @@ public abstract class Try<V> {
 	 * @return the contained value, if available; potentially {@code null}
 	 * @throws Exception if this {@code Try} is a failure
 	 */
+	@Nullable
 	public abstract V get() throws Exception;
 
 	/**

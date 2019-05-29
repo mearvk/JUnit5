@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import javax.annotation.Nullable;
+
 import org.apiguardian.api.API;
 import org.junit.platform.commons.util.AnnotationUtils;
 import org.junit.platform.commons.util.Preconditions;
@@ -62,7 +64,7 @@ public final class AnnotationSupport {
 	 * @see #findAnnotation(Optional, Class)
 	 */
 	@API(status = MAINTAINED, since = "1.3")
-	public static boolean isAnnotated(Optional<? extends AnnotatedElement> element,
+	public static boolean isAnnotated(@Nullable Optional<? extends AnnotatedElement> element,
 			Class<? extends Annotation> annotationType) {
 
 		return AnnotationUtils.isAnnotated(element, annotationType);
@@ -80,7 +82,7 @@ public final class AnnotationSupport {
 	 * @see #isAnnotated(Optional, Class)
 	 * @see #findAnnotation(AnnotatedElement, Class)
 	 */
-	public static boolean isAnnotated(AnnotatedElement element, Class<? extends Annotation> annotationType) {
+	public static boolean isAnnotated(@Nullable AnnotatedElement element, Class<? extends Annotation> annotationType) {
 		return AnnotationUtils.isAnnotated(element, annotationType);
 	}
 
@@ -99,8 +101,8 @@ public final class AnnotationSupport {
 	 * @see #findAnnotation(AnnotatedElement, Class)
 	 */
 	@API(status = MAINTAINED, since = "1.1")
-	public static <A extends Annotation> Optional<A> findAnnotation(Optional<? extends AnnotatedElement> element,
-			Class<A> annotationType) {
+	public static <A extends Annotation> Optional<A> findAnnotation(
+			@Nullable Optional<? extends AnnotatedElement> element, Class<A> annotationType) {
 
 		return AnnotationUtils.findAnnotation(element, annotationType);
 	}
@@ -122,7 +124,8 @@ public final class AnnotationSupport {
 	 * @return an {@code Optional} containing the annotation; never {@code null} but
 	 * potentially empty
 	 */
-	public static <A extends Annotation> Optional<A> findAnnotation(AnnotatedElement element, Class<A> annotationType) {
+	public static <A extends Annotation> Optional<A> findAnnotation(@Nullable AnnotatedElement element,
+			Class<A> annotationType) {
 		return AnnotationUtils.findAnnotation(element, annotationType);
 	}
 
@@ -146,8 +149,8 @@ public final class AnnotationSupport {
 	 * @see #findRepeatableAnnotations(AnnotatedElement, Class)
 	 */
 	@API(status = MAINTAINED, since = "1.5")
-	public static <A extends Annotation> List<A> findRepeatableAnnotations(Optional<? extends AnnotatedElement> element,
-			Class<A> annotationType) {
+	public static <A extends Annotation> List<A> findRepeatableAnnotations(
+			@Nullable Optional<? extends AnnotatedElement> element, Class<A> annotationType) {
 
 		return AnnotationUtils.findRepeatableAnnotations(element, annotationType);
 	}
@@ -191,7 +194,7 @@ public final class AnnotationSupport {
 	 * @see java.lang.annotation.Repeatable
 	 * @see java.lang.annotation.Inherited
 	 */
-	public static <A extends Annotation> List<A> findRepeatableAnnotations(AnnotatedElement element,
+	public static <A extends Annotation> List<A> findRepeatableAnnotations(@Nullable AnnotatedElement element,
 			Class<A> annotationType) {
 
 		return AnnotationUtils.findRepeatableAnnotations(element, annotationType);

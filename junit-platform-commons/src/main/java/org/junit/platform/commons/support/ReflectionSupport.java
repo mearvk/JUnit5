@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import javax.annotation.Nullable;
+
 import org.apiguardian.api.API;
 import org.junit.platform.commons.function.Try;
 import org.junit.platform.commons.util.ExceptionUtils;
@@ -236,7 +238,7 @@ public final class ReflectionSupport {
 	 * @since 1.4
 	 */
 	@API(status = MAINTAINED, since = "1.4")
-	public static Try<Object> tryToReadFieldValue(Field field, Object instance) {
+	public static Try<Object> tryToReadFieldValue(Field field, @Nullable Object instance) {
 		return ReflectionUtils.tryToReadFieldValue(field, instance);
 	}
 

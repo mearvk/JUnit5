@@ -19,7 +19,6 @@ import java.util.logging.LogRecord;
 import java.util.stream.Stream;
 
 import org.apiguardian.api.API;
-import org.junit.platform.commons.JUnitException;
 
 /**
  * {@code LogRecordListener} is only intended for testing purposes within
@@ -76,12 +75,6 @@ public class LogRecordListener {
 	 * @see #stream(Class, Level)
 	 */
 	public Stream<LogRecord> stream(Level level) {
-		// NOTE: we cannot use org.junit.platform.commons.util.Preconditions here
-		// since that would introduce a package cycle.
-		if (level == null) {
-			throw new JUnitException("Level must not be null");
-		}
-
 		return stream().filter(logRecord -> logRecord.getLevel() == level);
 	}
 
@@ -101,12 +94,6 @@ public class LogRecordListener {
 	 * @see #stream(Class, Level)
 	 */
 	public Stream<LogRecord> stream(Class<?> clazz) {
-		// NOTE: we cannot use org.junit.platform.commons.util.Preconditions here
-		// since that would introduce a package cycle.
-		if (clazz == null) {
-			throw new JUnitException("Class must not be null");
-		}
-
 		return stream().filter(logRecord -> logRecord.getLoggerName().equals(clazz.getName()));
 	}
 
@@ -128,12 +115,6 @@ public class LogRecordListener {
 	 * @see #stream(Class)
 	 */
 	public Stream<LogRecord> stream(Class<?> clazz, Level level) {
-		// NOTE: we cannot use org.junit.platform.commons.util.Preconditions here
-		// since that would introduce a package cycle.
-		if (level == null) {
-			throw new JUnitException("Level must not be null");
-		}
-
 		return stream(clazz).filter(logRecord -> logRecord.getLevel() == level);
 	}
 

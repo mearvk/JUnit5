@@ -18,8 +18,9 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
+import javax.annotation.Nullable;
+
 import org.apiguardian.api.API;
-import org.junit.platform.commons.JUnitException;
 
 /**
  * Factory for the {@link Logger} facade for JUL.
@@ -42,12 +43,6 @@ public final class LoggerFactory {
 	 * @return the logger
 	 */
 	public static Logger getLogger(Class<?> clazz) {
-		// NOTE: we cannot use org.junit.platform.commons.util.Preconditions here
-		// since that would introduce a package cycle.
-		if (clazz == null) {
-			throw new JUnitException("Class must not be null");
-		}
-
 		return new DelegatingLogger(clazz.getName());
 	}
 
@@ -140,7 +135,7 @@ public final class LoggerFactory {
 			log(Level.FINER, throwable, messageSupplier);
 		}
 
-		private void log(Level level, Throwable throwable, Supplier<String> messageSupplier) {
+		private void log(Level level, @Nullable Throwable throwable, Supplier<String> messageSupplier) {
 			boolean loggable = this.julLogger.isLoggable(level);
 			if (loggable || !listeners.isEmpty()) {
 				LogRecord logRecord = createLogRecord(level, throwable, messageSupplier);
@@ -151,7 +146,8 @@ public final class LoggerFactory {
 			}
 		}
 
-		private LogRecord createLogRecord(Level level, Throwable throwable, Supplier<String> messageSupplier) {
+		private LogRecord createLogRecord(Level level, @Nullable Throwable throwable,
+				@Nullable Supplier<String> messageSupplier) {
 			StackTraceElement[] stack = new Throwable().getStackTrace();
 			String sourceClassName = null;
 			String sourceMethodName = null;
@@ -179,7 +175,8 @@ public final class LoggerFactory {
 			return logRecord;
 		}
 
-		private static String nullSafeGet(Supplier<String> messageSupplier) {
+		@Nullable
+		private static String nullSafeGet(@Nullable Supplier<String> messageSupplier) {
 			return (messageSupplier != null ? messageSupplier.get() : null);
 		}
 
