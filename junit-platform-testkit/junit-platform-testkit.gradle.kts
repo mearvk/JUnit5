@@ -1,8 +1,18 @@
 plugins {
 	`java-library-conventions`
+	// id("org.assertj.generator") version "0.0.6b"
 }
 
 description = "JUnit Platform Test Kit"
+
+/*
+sourceSets {
+	main {
+		// must specify assertJ block to have it applied
+		assertJ { }
+	}
+}
+*/
 
 dependencies {
 	api("org.apiguardian:apiguardian-api:${Versions.apiGuardian}")
