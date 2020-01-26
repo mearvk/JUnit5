@@ -128,48 +128,39 @@ public final class TagFilter {
 	}
 
 	private static PostDiscoveryFilter includeMatching(List<String> tagExpressions) {
-		Supplier<String> inclusionReason = () -> inclusionReasonExpressionSatisfy(tagExpressions);
-		Supplier<String> exclusionReason = () -> exclusionReasonExpressionNotSatisfy(tagExpressions);
+		Supplier<String> inclusionReason = reasonSupplier("included because tags match expression(s): [%s]",
+			tagExpressions);
+		Supplier<String> exclusionReason = reasonSupplier("excluded because tags do not match tag expression(s): [%s]",
+			tagExpressions);
 		List<TagExpression> parsedTagExpressions = parseAll(tagExpressions);
 		return descriptor -> {
 			Set<TestTag> tags = descriptor.getTags();
-			boolean included = parsedTagExpressions.stream().anyMatch(expression -> expression.evaluate(tags));
-
+			boolean included = parsedTagExpressions.stream() //
+					.anyMatch(expression -> expression.evaluate(tags));
 			return FilterResult.includedIf(included, inclusionReason, exclusionReason);
 		};
-	}
-
-	private static String inclusionReasonExpressionSatisfy(List<String> tagExpressions) {
-		return String.format("included because tags match expression(s): [%s]", formatToString(tagExpressions));
-	}
-
-	private static String exclusionReasonExpressionNotSatisfy(List<String> tagExpressions) {
-		return String.format("excluded because tags do not match tag expression(s): [%s]",
-			formatToString(tagExpressions));
 	}
 
 	private static PostDiscoveryFilter excludeMatching(List<String> tagExpressions) {
-		Supplier<String> inclusionReason = () -> inclusionReasonExpressionNotSatisfy(tagExpressions);
-		Supplier<String> exclusionReason = () -> exclusionReasonExpressionSatisfy(tagExpressions);
+		Supplier<String> inclusionReason = reasonSupplier("included because tags do not match expression(s): [%s]",
+			tagExpressions);
+		Supplier<String> exclusionReason = reasonSupplier("excluded because tags match tag expression(s): [%s]",
+			tagExpressions);
 		List<TagExpression> parsedTagExpressions = parseAll(tagExpressions);
 		return descriptor -> {
 			Set<TestTag> tags = descriptor.getTags();
-			boolean included = parsedTagExpressions.stream().noneMatch(expression -> expression.evaluate(tags));
-
+			boolean included = parsedTagExpressions.stream() //
+					.noneMatch(expression -> expression.evaluate(tags));
 			return FilterResult.includedIf(included, inclusionReason, exclusionReason);
 		};
 	}
 
-	private static String inclusionReasonExpressionNotSatisfy(List<String> tagExpressions) {
-		return String.format("included because tags do not match expression(s): [%s]", formatToString(tagExpressions));
-	}
-
-	private static String exclusionReasonExpressionSatisfy(List<String> tagExpressions) {
-		return String.format("excluded because tags match tag expression(s): [%s]", formatToString(tagExpressions));
-	}
-
-	private static String formatToString(List<String> tagExpressions) {
-		return tagExpressions.stream().map(String::trim).sorted().collect(Collectors.joining(","));
+	private static Supplier<String> reasonSupplier(String reason, List<String> tagExpressions) {
+		String tags = tagExpressions.stream() //
+				.map(String::trim) //
+				.sorted() //
+				.collect(Collectors.joining(","));
+		return () -> String.format(reason, tags);
 	}
 
 	private static List<TagExpression> parseAll(List<String> tagExpressions) {
